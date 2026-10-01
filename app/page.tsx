@@ -23,7 +23,7 @@ export default async function HomePage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <div className="inline-block px-3 py-1 rounded-full border border-gold/40 text-gold-dark text-xs tracking-[0.25em] uppercase mb-4">
-            eGold Voucher Program
+            e-Gold Voucher Program
           </div>
           <h1 className="font-display text-4xl text-ink">
             Scan to claim your voucher
