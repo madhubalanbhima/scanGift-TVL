@@ -152,7 +152,7 @@ export async function GET(
             {giftImage && (
               <img src={giftImage} width={300} height={160} style={{ objectFit: "contain" }} alt="Gift" />
             )}
-            {grandImage && (
+            {/* {grandImage && (
               <img
                 src={grandImage}
                 width={420}
@@ -160,7 +160,7 @@ export async function GET(
                 style={{ objectFit: "contain" }}
                 alt="Grand Opening"
               />
-            )}
+            )} */}
           </div>
 
           {/* Right: amount badge */}
@@ -181,7 +181,7 @@ export async function GET(
               fontWeight: 900,
             }}
           >
-            ₹1,000
+            1,000
           </div>
 
           {/* QR code — bottom-left, sized to leave room for the footer bar */}
