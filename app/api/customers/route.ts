@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Customer } from "@/models/Customer";
 import {
@@ -48,7 +47,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const voucherId = `1000-${randomUUID()}`;
+    const counter = await Customer.db
+      .collection<{ _id: string; value: number }>("voucher_counters")
+      .findOneAndUpdate(
+        { _id: "customer-vouchers" },
+        [
+          {
+            $set: {
+              value: { $add: [{ $ifNull: ["$value", 995] }, 5] },
+            },
+          },
+        ],
+        { upsert: true, returnDocument: "after" }
+      );
+
+    if (!counter) {
+      throw new Error("Failed to allocate voucher ID.");
+    }
+
+    const voucherId = String(counter.value);
 
     const customer = await Customer.create({
       fullName,
@@ -63,7 +80,7 @@ export async function POST(req: NextRequest) {
     // has a unique image tied to its customer-specific voucher ID.
     const voucherImageUrl = `${getBaseUrl(req)}/api/voucher-image/${encodeURIComponent(
       voucherId
-    )}`;
+    )}?template=tvl-voucher-v2`;
 
     const sendResult = await sendVoucherOnWhatsApp({
       toNumber: whatsappNumber,

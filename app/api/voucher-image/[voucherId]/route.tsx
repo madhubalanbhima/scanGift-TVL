@@ -7,6 +7,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function getBaseUrl(req: NextRequest): string {
   const configured = process.env.NEXT_PUBLIC_BASE_URL;
@@ -49,15 +50,7 @@ export async function GET(
       return new Response("Voucher not found", { status: 404 });
     }
 
-    // Load all static promotional assets. Any of these can be missing without
-    // crashing the render — the layout just omits that piece.
-    const bgImage = loadImageDataUri("bg.png");
-    const badgeImage = loadImageDataUri("101.png");
-    const figureImage = loadImageDataUri("bhima-boy.png");
-    const modelImage = loadImageDataUri("model.png");
-    const giftImage = loadImageDataUri("gift.png");
-    const grandImage = loadImageDataUri("grand.png");
-    const logoImage = loadImageDataUri("logo.png");
+    const voucherImage = loadImageDataUri("tvlVoucher.jpeg", "image/jpeg");
 
     let qrDataUrl: string | null = null;
     try {
@@ -85,157 +78,85 @@ export async function GET(
             height: "630px",
             display: "flex",
             position: "relative",
-            borderRadius: "20px",
             overflow: "hidden",
             background: "#1a1410",
           }}
         >
-          {/* Background */}
-          {bgImage && (
+          {voucherImage && (
             <img
-              src={bgImage}
+              src={voucherImage}
               width={1200}
               height={630}
-              style={{ position: "absolute", top: "0px", left: "0px", objectFit: "cover" }}
-              alt=""
+              style={{ position: "absolute", inset: "0px", objectFit: "cover" }}
+              alt="Bhima Tirunelveli gift voucher"
             />
           )}
 
-          {/* Top-left: 10 Years badge — adjust width/height to match your asset's real ratio */}
-          {badgeImage && (
-            <img
-              src={badgeImage}
-              width={220}
-              height={140}
-              style={{ position: "absolute", top: "20px", left: "30px", objectFit: "contain" }}
-              alt="10 Years Celebrating"
-            />
-          )}
-
-          {/* Top-right: Bhima boy figure */}
-          {figureImage && (
-            <img
-              src={figureImage}
-              width={150}
-              height={220}
-              style={{ position: "absolute", top: "0px", right: "0px", objectFit: "contain" }}
-              alt="Celebration Figure"
-            />
-          )}
-
-          {/* Left: model image, bleeding to the edge */}
-          {/* {modelImage && (
-            <img
-              src={modelImage}
-              width={440}
-              height={630}
-              style={{ position: "absolute", left: "50px", top: "100px", objectFit: "cover" }}
-              alt="Bhima Model"
-            />
-          )} */}
-
-          {/* Center: gift label + grand opening badge, stacked and centered */}
           <div
             style={{
               position: "absolute",
-              top: "0px",
-              left: "230px",
-              right: "270px",
-              bottom: "100px",
+              left: "808px",
+              top: "35px",
+              width: "140px",
+              height: "140px",
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "8px",
+              background: "#ffffff",
+              borderRadius: "4px",
+              padding: "6px",
+              boxSizing: "border-box",
             }}
           >
-            {giftImage && (
-              <img src={giftImage} width={300} height={160} style={{ objectFit: "contain" }} alt="Gift" />
-            )}
-            {/* {grandImage && (
-              <img
-                src={grandImage}
-                width={420}
-                height={270}
-                style={{ objectFit: "contain" }}
-                alt="Grand Opening"
-              />
-            )} */}
+            {qrDataUrl && <img src={qrDataUrl} width={128} height={128} alt="Voucher verification QR code" />}
           </div>
 
-          {/* Right: amount badge */}
           <div
             style={{
               position: "absolute",
-              right: "38px",
-              top: "245px",
+              left: "955px",
+              top: "65px",
+              width: "190px",
+              height: "110px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "5px solid #e6c76a",
-              borderRadius: "18px",
-              padding: "18px 28px",
-              background: "rgba(93,9,9,0.92)",
-              color: "#fff0b5",
-              fontSize: "64px",
-              fontWeight: 900,
+              border: "2px solid #e6c76a",
+              borderRadius: "8px",
+              background: "rgba(38,79,43,0.96)",
+              color: "#ffffff",
+              fontSize: "24px",
+              fontWeight: 700,
+              lineHeight: 1.25,
+              textAlign: "center",
             }}
           >
-            1,000
+            Scan to verify this voucher
           </div>
 
-          {/* QR code — bottom-left, sized to leave room for the footer bar */}
-          {qrDataUrl && (
-            <div
-              style={{
-                position: "absolute",
-                left: "50px",
-                bottom: "90px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                background: "#ffffff",
-                borderRadius: "8px",
-                padding: "8px",
-              }}
-            >
-              <img src={qrDataUrl} width={180} height={180} alt="Redemption QR code" />
-              <div
-                style={{
-                  display: "flex",
-                  color: "#181511",
-                  fontSize: "10px",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
-                  marginTop: "4px",
-                }}
-              >
-                Scan to verify
-              </div>
-            </div>
-          )}
-
-          {/* Footer: per-customer voucher details pinned to bottom, full width */}
           <div
             style={{
               position: "absolute",
-              bottom: "0px",
-              left: "0px",
-              right: "0px",
+              bottom: "12px",
+              left: "24px",
+              right: "24px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "rgba(255,255,255,0.92)",
-              padding: "10px 24px",
+              background: "rgba(26,55,30,0.9)",
+              border: "1px solid #e6c76a",
+              borderRadius: "8px",
+              padding: "8px 16px",
             }}
           >
             <div
               style={{
                 display: "flex",
-                color: "#2a1a00",
-                fontSize: "26px",
+                color: "#ffffff",
+                fontSize: "18px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
+                textAlign: "center",
               }}
             >
               {customer.fullName} · {customer.voucherId} · Issued {issuedDate}
@@ -247,7 +168,7 @@ export async function GET(
         width: 1200,
         height: 630,
         headers: {
-          "Cache-Control": "no-store, must-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
         }
       }
     );

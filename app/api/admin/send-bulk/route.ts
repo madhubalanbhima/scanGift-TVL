@@ -32,7 +32,7 @@ async function sendTemplateMessage(
 ): Promise<{ success: boolean; error?: string }> {
   const voucherImageUrl = `${getBaseUrl(req)}/api/voucher-image/${encodeURIComponent(
     voucherId
-  )}`;
+  )}?template=tvl-voucher-v2`;
 
   return sendVoucherOnWhatsApp({
     toNumber,
